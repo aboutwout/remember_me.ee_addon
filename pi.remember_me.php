@@ -15,7 +15,7 @@ $plugin_info = array(
 );
 
 /**
-* Remember Me Plugin class
+* Remember Me Plugin class 
 *
 * @package		  remember_me.ee_addon
 * @version			0.8
