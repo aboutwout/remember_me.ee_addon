@@ -1,4 +1,4 @@
-Remember Me v0.8.1
+Remember Me
 ==================
 
 Save entries for a user during a session. This could be used for a 'add to cart' function or for a 'product compare' function (save entry_id's for later use). Entries are only stored during a session.
