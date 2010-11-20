@@ -12,7 +12,7 @@ If the channel parameter is specified, only entries in a certain channel are aff
 # return
 Specify a return URL for this operation. After the plugin has been run, the page is redirected to that URL. Only the :set and :clear methods support this parameter. If, however, the template has been called through an Ajax request, the page will not be redirected.
 
-Remember Me is an ExpressionEngine 1.x add-on.
+Remember Me is an ExpressionEngine 1.x add-on. 
 
 
 Usage
