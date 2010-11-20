@@ -3,7 +3,8 @@ Remember Me
 
 Save entries for a user during a session. This could be used for a 'add to cart' function or for a 'product compare' function (save entry_id's for later use). Entries are only stored during a session.
 
-#### Parameters
+### Parameters
+
 **entry_id**
 When using the entry_id parameter, only a single entry in storage will be affected.
 
@@ -16,7 +17,7 @@ Specify a return URL for this operation. After the plugin has been run, the page
 Remember Me is an ExpressionEngine 1.x add-on.
 
 
-#### Usage
+### Usage
 
 The :set method can be used anywhere and do not affect page output, but can also be used in a template of it's own to be able to call it through an Ajax request. The same goes for the :get and :clear methods.
 
