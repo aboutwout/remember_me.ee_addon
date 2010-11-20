@@ -65,7 +65,7 @@ class Remember_me {
 	*/
 	function __construct()
 	{
-	  global $TMPL;
+	  global $TMPL, $PREFS;
 
     $this->_storage = (isset($_SESSION['remember_me'])) ? $_SESSION['remember_me'] : array();
     
@@ -73,6 +73,7 @@ class Remember_me {
     $this->_channel = $TMPL->fetch_param('channel');
     $this->_return = $TMPL->fetch_param('return');
     
+    $this->_current_site = $PREFS->ini('site_id');
 	}
 	// END __construct
 	
