@@ -14,7 +14,10 @@ If the channel parameter is specified, only entries in a certain channel are aff
 **return**
 Specify a return URL for this operation. After the plugin has been run, the page is redirected to that URL. Only the :set and :clear methods support this parameter. If, however, the template has been called through an Ajax request, the page will not be redirected.
 
-Remember Me is an ExpressionEngine 1.x add-on.
+**reverse**
+If set to 'yes' this parameter will reverse the order of the returned entries. This is a handy feature if you want to return the latest saved entries.
+
+Remember Me is an ExpressionEngine 1.x add-on. You can find the 2.x version [here](https://github.com/AboutWout/remember_me.ee2_addon).
 
 
 ### Usage
