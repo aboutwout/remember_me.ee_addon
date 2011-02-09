@@ -7,7 +7,7 @@ if (session_id() == '')
 
 $plugin_info = array(
 	'pi_name'			=> 'Remember Me',
-	'pi_version'		=> '0.9',
+	'pi_version'		=> '0.9.3',
 	'pi_author'			=> 'Wouter Vervloet',
 	'pi_author_url'		=> 'http://www.baseworks.nl/',
 	'pi_description'	=> 'Save entries for a user to do something with them on (another) page.',
@@ -18,7 +18,7 @@ $plugin_info = array(
 * Remember Me Plugin class 
 *
 * @package		  remember_me.ee_addon
-* @version			0.9
+* @version			0.9.3
 * @author			  Wouter Vervloet <wouter@baseworks.nl>
 * @license			http://creativecommons.org/licenses/by-sa/3.0/
 */
@@ -72,6 +72,7 @@ class Remember_me {
     $this->_entry_id = $TMPL->fetch_param('entry_id');
     $this->_channel = $TMPL->fetch_param('channel');
     $this->_return = $TMPL->fetch_param('return');
+    $this->_reverse = ($TMPL->fetch_param('reverse') == 'yes') ? TRUE : FALSE;
     
     $this->_current_site = $PREFS->ini('site_id');
 	}
@@ -91,9 +92,7 @@ class Remember_me {
       $this->_save_storage();
       
     }
-    
-    $this->_redirect();
-	  
+    	  
 	}
 	// END set
 	
@@ -102,7 +101,7 @@ class Remember_me {
 	{
 	  	  
 	  // entry_id parameter has been specified
-	  if( $entry_id = $this->_entry_exists($this->_entry_id, true) )
+	  if( $entry_id = $this->_entry_exists($this->_entry_id, TRUE) )
 	  {
 	    return $this->_get_entry( $entry_id );
 	  }
@@ -123,7 +122,7 @@ class Remember_me {
 	{
 	  
 	  // entry_id parameter has been specified
-	  if( $entry_id = $this->_entry_exists($this->_entry_id, true) )
+	  if( $entry_id = $this->_entry_exists($this->_entry_id, TRUE) )
 	  {
 	    $this->_clear_entry( $entry_id );
 	  }
@@ -137,17 +136,15 @@ class Remember_me {
       $this->_clear_all();	    
 	  }
     
-    $this->_redirect();
-
 	}
 	// END clear
 	
 	
-	function _get_entry($entry_id=false)
+	function _get_entry($entry_id=FALSE)
 	{
 	  	  
 	  // If channel_id is not set, abandon ship
-    if($entry_id == false) return 0;
+    if($entry_id == FALSE) return 0;
 	      
     return isset($this->_storage[$entry_id]) ? 1 : 0;
     
@@ -158,17 +155,23 @@ class Remember_me {
 	function _get_all()
 	{
 	      
-    return (count($this->_storage) > 0) ? implode('|', array_keys($this->_storage)) : '';
-    
+    $results = array_keys($this->_storage);
+
+    if( $this->_reverse === TRUE )
+    {
+      $results = array_reverse($results);
+    }
+
+    return implode('|', $results);
 	}
 	// END _get_all
 
 
-  function _get_where_channel($channel_id=false)
+  function _get_where_channel($channel_id=FALSE)
   {
     
     // If channel_id is not set, abandon ship
-    if($channel_id == false) return false;
+    if($channel_id == FALSE) return FALSE;
 
     $results = array();
     foreach ($this->_storage as $key => $entry)
@@ -179,17 +182,22 @@ class Remember_me {
       }
     }
     
+    if( $this->_reverse === TRUE )
+    {
+      $results = array_reverse($results);
+    }
+    
     return implode('|', $results);
      
   }
   // END _get_where_channel
   
   
-	function _clear_entry($entry_id=false)
+	function _clear_entry($entry_id=FALSE)
 	{
 	  
 	  // If entry_id is not set, abandon ship
-    if($entry_id == false) return false;
+    if($entry_id == FALSE) return FALSE;
 	      
     if( isset($this->_storage[$entry_id]) )
     {
@@ -197,8 +205,6 @@ class Remember_me {
       
       $this->_save_storage();
     }
-    
-    $this->_redirect();
     
 	}
 	// END _clear_entry
@@ -210,18 +216,16 @@ class Remember_me {
     $this->_storage = array();
 
     $this->_save_storage();
-    
-    $this->_redirect();    
-	  
+    	  
 	}
 	// END _clear_all
 
 
-  function _clear_where_channel($channel_id=false)
+  function _clear_where_channel($channel_id=FALSE)
   {
   
     // If channel_id is not set, abandon ship
-    if($channel_id == false) return;
+    if($channel_id == FALSE) return;
     
     $keep = array();
     
@@ -236,9 +240,7 @@ class Remember_me {
     $this->_storage = $keep;
         
     $this->_save_storage();
-    
-    $this->_redirect();
-    
+        
   }
 	// END _clear_where_channel
   
@@ -250,6 +252,8 @@ class Remember_me {
 
     // Save storage to cookie    
     $_SESSION['remember_me'] = $this->_storage;
+
+    $this->_redirect();
       
   }
   
@@ -272,11 +276,11 @@ class Remember_me {
 	* @param	string	$in entry_id or url_title of a weblog entry
 	* @return	mixed [integer|boolean]
 	*/
-  function _entry_exists($in = false, $return_id=false) {
+  function _entry_exists($in = FALSE, $return_id=FALSE) {
 
     global $DB, $IN;
     
-    if($in === false)
+    if($in === FALSE)
     {
       $in = $IN->QSTR;
     }
@@ -288,7 +292,7 @@ class Remember_me {
       return ($return_id) ? (int) $results->row['entry_id'] : $results->row;
     }
     
-    return false;
+    return FALSE;
   }
 	// END _entry_exists
 
@@ -298,15 +302,15 @@ class Remember_me {
 	* @param	string	$channel channel_id or channel short name
 	* @return	mixed [integer|boolean]
 	*/
-  function _channel_exists($channel=false) {
+  function _channel_exists($channel=FALSE) {
 
     global $DB;
     
-    if($channel == false) return false;
+    if($channel == FALSE) return FALSE;
 
  	  $results = $DB->query("SELECT weblog_id as channel_id FROM exp_weblogs WHERE (weblog_id = '$channel' OR blog_name = '$channel') AND site_id = '".$this->_current_site."'");
     
-    return ($results->num_rows > 0) ? (int) $results->row['channel_id'] : false;    
+    return ($results->num_rows > 0) ? (int) $results->row['channel_id'] : FALSE;    
   }
 	// END _channel_exists
 
@@ -329,6 +333,9 @@ class Remember_me {
       // Get entries belonging to a certain channel from storage
       {exp:remember_me:get channel='producten'}<br />
 
+      // Retrieve saved entries in a reversed order
+      {exp:remember_me:get reverse='yes'}<br />
+
       // Check if a certain entry is in storage
       {if {exp:remember_me:get entry_id='61'}}
         Entry in storage
@@ -346,7 +353,7 @@ class Remember_me {
       {exp:remember_me:clear channel='products'}
       
       // It can also be used in conjunction with the {exp:weblog:entries} loop
-      {exp:weblog:entries entry_id="{exp:remember_me:get channel='producten' parse='inward'}" parse='inward' dynamic='off'}
+      {exp:weblog:entries fixed_order="{exp:remember_me:get channel='producten'}" parse='inward' dynamic='off'}
         {title}<br />
       {/exp:weblog:entries}
 
